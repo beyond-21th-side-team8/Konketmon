@@ -2,6 +2,7 @@ package view;
 
 import controller.KonketmonController;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class KonketmonView {
@@ -12,7 +13,7 @@ public class KonketmonView {
         this.konketController = konketController;
     }
 
-    public void mainmenu() {
+    public void mainmenu() throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -36,7 +37,7 @@ public class KonketmonView {
         }
     }
 
-    public void displayMainMenu(Scanner scanner) {
+    public void displayMainMenu(Scanner scanner) throws SQLException {
         while (true) {
 
             clearConsole(); // 화면을 깨끗하게 지우는 함수 (구현 필요)
@@ -65,6 +66,7 @@ public class KonketmonView {
                     break;
                 case "3":
                     System.out.println("\n    게임을 종료합니다. 안녕히 가십시오...");
+                    konketController.closeConnection();
                     System.exit(0); // 프로그램 종료
                     break;
                 default:
