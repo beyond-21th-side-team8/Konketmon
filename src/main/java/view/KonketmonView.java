@@ -206,30 +206,30 @@ public class KonketmonView {
         System.out.println("    부스럭...");
         sleep(1000);
 
-        try {
-            // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
-            Monster monsterData = konketController.findWildMonster();
+//        try {
+//            // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
+////            Monster monsterData = konketController.findWildMonster();
+//
+//            if (monsterData == null) {
+//                System.out.println("\n    ...아무것도 나오지 않았다.");
+//                sleep(1500);
+//                return; // loggedInMenu로 복귀
+//            }
 
-            if (monsterData == null) {
-                System.out.println("\n    ...아무것도 나오지 않았다.");
-                sleep(1500);
-                return; // loggedInMenu로 복귀
-            }
-
-            String monsterName = monsterData.get("name");
-            String monsterArt = monsterData.get("asciiArt");
+//            String monsterName = monsterData.get("name");
+//            String monsterArt = monsterData.get("asciiArt");
 
             System.out.println("=================================================");
-            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
+//            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
             System.out.println("=================================================");
             // 실제 배틀 메뉴 호출
             displayBattleMenu(username, monster);
 
-        } catch (SQLException e) {
-            System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
-            e.printStackTrace();
-            sleep(1500);
-        }
+//        } catch (SQLException e) {
+//            System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
+//            e.printStackTrace();
+//            sleep(1500);
+//        }
     }
 
     /**
