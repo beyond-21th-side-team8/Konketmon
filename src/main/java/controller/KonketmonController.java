@@ -13,7 +13,7 @@ import java.util.Set;
 public class KonketmonController {
     Connection conn;
     Set<Monster> monsterSet = new HashSet<Monster>();
-    User user = new User(100);
+    User user = null;
 
     public KonketmonController(Connection conn) throws SQLException {
         this.conn = conn;
@@ -52,6 +52,9 @@ public class KonketmonController {
         stmt.setString(1, username);
         stmt.setString(2, password);
        ResultSet rs = stmt.executeQuery();
+       while (rs.next()) {
+           user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
+       }
         return rs != null;
     }
 
@@ -62,6 +65,7 @@ public class KonketmonController {
         stmt.setInt(3, 100);
         stmt.setBoolean(4, false);
         int result = stmt.executeUpdate();
+        user = new User(username,100,false);
         return result == 1;
     }
 }
