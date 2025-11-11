@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bd3a94c5-b7e8-484d-8c84-d845e89893b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/controller/KonketmonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/controller/KonketmonController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/run/Run.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/run/Run.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/view/KonketmonView.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/view/KonketmonView.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/KonketmonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/KonketmonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/view/KonketmonView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/KonketmonView.java" afterDir="false" />
-    </list>
+    <list default="true" id="bd3a94c5-b7e8-484d-8c84-d845e89893b6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
