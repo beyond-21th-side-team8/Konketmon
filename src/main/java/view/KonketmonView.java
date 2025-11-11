@@ -1,13 +1,14 @@
 package view;
 
 import controller.KonketmonController;
+import model.Monster;
 
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class KonketmonView {
     Scanner scanner = new Scanner(System.in);
-
+    Monster monster = null;
     // [MODIFIED] 컨트롤러는 생성자에서 받아옵니다.
     KonketmonController konketController;
     public KonketmonView(KonketmonController konketController) {
@@ -218,8 +219,11 @@ public class KonketmonView {
             String monsterName = monsterData.get("name");
             String monsterArt = monsterData.get("asciiArt");
 
+            System.out.println("=================================================");
+            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
+            System.out.println("=================================================");
             // 실제 배틀 메뉴 호출
-            displayBattleMenu(username, monsterName, monsterArt);
+            displayBattleMenu(username, monster);
 
         } catch (SQLException e) {
             System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
@@ -231,19 +235,18 @@ public class KonketmonView {
     /**
      * 실제 배틀 메뉴 (아스키 아트 + 1.공격 2.포획 3.도망)
      */
-    public void displayBattleMenu(String username, String monsterName, String monsterArt) throws SQLException {
+    public void displayBattleMenu(String username, Monster monster) throws SQLException {
         boolean isBattling = true;
 
         while (isBattling) {
             clearConsole();
 
             // 1. 아스키 아트 표시
+            System.out.println(monster.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
+            System.out.println("============= 몬스터의 현재 체력 : " + monster.getHP());
             System.out.println("=================================================");
-            System.out.println(monsterArt); // 컨트롤러에서 받아온 아스키 아트 출력
-            System.out.println("=================================================");
-            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
-            System.out.println("-------------------------------------------------");
             System.out.println("\n    무엇을 하시겠습니까?\n");
+            System.out.println("-------------------------------------------------");
 
             // 2. 메뉴 표시
             System.out.println("    ▶  1. 공격");
