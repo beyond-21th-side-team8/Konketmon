@@ -4,10 +4,7 @@ package controller;
 import model.Monster;
 import model.User;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -50,11 +47,21 @@ public class KonketmonController {
         return new Monster(11);
     }
 
-    public boolean loginUser(String username, String password) {
-        return false;
+    public boolean loginUser(String username, String password) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE id=? AND pw=?");
+        stmt.setString(1, username);
+        stmt.setString(2, password);
+       ResultSet rs = stmt.executeQuery();
+        return rs != null;
     }
 
-    public boolean registerUser(String username, String password) {
-        return false;
+    public boolean registerUser(String username, String password) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO user VALUES ( ?,?,?,?)");
+        stmt.setString(1, username);
+        stmt.setString(2, password);
+        stmt.setInt(3, 100);
+        stmt.setBoolean(4, false);
+        int result = stmt.executeUpdate();
+        return result == 1;
     }
 }
