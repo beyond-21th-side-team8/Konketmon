@@ -1,0 +1,22 @@
+<changelist name="Uncommitted_changes_before_Checkout_at_2025-11-11_오후_5_45_[Changes]" date="1762850746287" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-11-11_오후_5_45_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 2025-11-11 오후 5:45 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value=".gradle/8.14/checksums/checksums.lock" />
+    <option name="AFTER_PATH" value=".gradle/8.14/checksums/checksums.lock" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-11-11_오후_5_45_[Changes]/checksums.lock" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value=".gradle/8.14/checksums/sha1-checksums.bin" />
+    <option name="AFTER_PATH" value=".gradle/8.14/checksums/sha1-checksums.bin" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-11-11_오후_5_45_[Changes]/sha1-checksums.bin" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value=".idea/dataSources/f14a0556-9137-41c9-a577-5cd9d1949ec2/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value=".gradle/8.14/checksums/md5-checksums.bin" />
+    <option name="AFTER_PATH" value=".gradle/8.14/checksums/md5-checksums.bin" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-11-11_오후_5_45_[Changes]/md5-checksums.bin" />
+  </binary>
+</changelist>
