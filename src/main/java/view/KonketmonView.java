@@ -202,34 +202,33 @@ public class KonketmonView {
         System.out.println("                [ 야생 풀숲 ]");
         System.out.println("=================================================");
         System.out.println("\n    " + username + "은(는) 풀숲에 발을 들여놓았다...");
-        sleep(2000);
-        System.out.println("    부스럭...");
         sleep(1000);
+        System.out.println("    부스럭...");
+        sleep(500);
 
-//        try {
-//            // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
-////            Monster monsterData = konketController.findWildMonster();
-//
-//            if (monsterData == null) {
-//                System.out.println("\n    ...아무것도 나오지 않았다.");
-//                sleep(1500);
-//                return; // loggedInMenu로 복귀
-//            }
+        try {
+            // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
+            Monster monster = konketController.findWildMonster();
 
-//            String monsterName = monsterData.get("name");
-//            String monsterArt = monsterData.get("asciiArt");
+            if (monster == null) {
+                System.out.println("\n    ...아무것도 나오지 않았다.");
+                sleep(500);
+                return; // loggedInMenu로 복귀
+            }
+
+            String monsterName = monster.getName();
 
             System.out.println("=================================================");
-//            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
+            System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
             System.out.println("=================================================");
             // 실제 배틀 메뉴 호출
             displayBattleMenu(username, monster);
 
-//        } catch (SQLException e) {
-//            System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
-//            e.printStackTrace();
-//            sleep(1500);
-//        }
+        } catch (SQLException e) {
+            System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
+            e.printStackTrace();
+            sleep(750);
+        }
     }
 
     /**
@@ -239,11 +238,9 @@ public class KonketmonView {
         boolean isBattling = true;
 
         while (isBattling) {
-            clearConsole();
-
             // 1. 아스키 아트 표시
             System.out.println(monster.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
-            System.out.println("============= 몬스터의 현재 체력 : " + monster.getHP());
+            System.out.println("======== 몬스터의 현재 체력 : " + monster.getHP()+" ===========");
             System.out.println("=================================================");
             System.out.println("\n    무엇을 하시겠습니까?\n");
             System.out.println("-------------------------------------------------");

@@ -5,14 +5,11 @@ import model.Monster;
 import model.User;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KonketmonController {
     Connection conn;
-    Set<Monster> monsterSet = new HashSet<Monster>();
+    List<Monster> monsterSet = new ArrayList<Monster>();
     User user = null;
 
     public KonketmonController(Connection conn) throws SQLException {
@@ -44,7 +41,12 @@ public class KonketmonController {
     }
 
     public Monster findWildMonster() {
-        return new Monster(11);
+        Random rand = new Random();
+
+        int randNum = rand.nextInt(monsterSet.size());
+
+        return new Monster(monsterSet.get(randNum).getName(),monsterSet.get(randNum).getAsciiArt(),monsterSet.get(randNum).getHP());
+        
     }
 
     public boolean loginUser(String username, String password) throws SQLException {
