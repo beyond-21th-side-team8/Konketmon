@@ -208,7 +208,7 @@ public class KonketmonView {
 
         try {
             // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
-            Map<String, String> monsterData = konketController.findWildMonster();
+            Monster monsterData = konketController.findWildMonster();
 
             if (monsterData == null) {
                 System.out.println("\n    ...아무것도 나오지 않았다.");
