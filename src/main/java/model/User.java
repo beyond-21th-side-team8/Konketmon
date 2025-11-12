@@ -9,7 +9,7 @@ public class User {
 
     public int getPower() {
         Random rand = new Random();
-        return rand.nextInt(4) + 1;
+        return rand.nextInt(5) + 5;
     }
 
     public int getHP() {
