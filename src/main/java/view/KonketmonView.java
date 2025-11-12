@@ -278,15 +278,14 @@ public class KonketmonView {
                     break;
                 case "2":
                     // TODO: 컨트롤러의 '포획' 로직 호출
-                    // boolean isSuccess = konketController.catchMonster(username, monsterName);
-                    // if (isSuccess) {
-                    //     System.out.println("\n    " + monsterName + "을(를) 잡았다!");
-                    //     isBattling = false;
-                    // } else {
-                    //     System.out.println("\n    ...포획에 실패했다!");
-                    // }
+                     boolean isSuccess = konketController.catchMonster(user, monster);
+                     if (isSuccess) {
+                         System.out.println("\n    " + monster.getName() + "을(를) 잡았다!");
+                         isBattling = false;
+                     } else {
+                         System.out.println("\n    ...포획에 실패했다!");
+                     }
 
-                    System.out.println("\n    (포획 기능 구현 중...)");
                     sleep(1500);
                     break;
                 case "3":
