@@ -2,6 +2,7 @@ package view;
 
 import controller.KonketmonController;
 import model.Monster;
+import model.User;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -154,7 +155,7 @@ public class KonketmonView {
         boolean isRunning = true;
         while (isRunning) {
             clearConsole(); // 화면을 깨끗하게 지우기
-
+            User user = konketController.getUser();
             // 간단한 필드 아스키 아트
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             System.out.println("  ^^^^      /\\     ^^^         ^^");
@@ -176,7 +177,7 @@ public class KonketmonView {
 
             switch (choice) {
                 case "1":
-                    startBattleView(username); // 배틀 시작 함수 호출
+                    startBattleView(user); // 배틀 시작 함수 호출
                     break;
                 case "2":
                     showPokedexView(username); // 내 콘켓몬 관리 함수 호출
@@ -196,12 +197,12 @@ public class KonketmonView {
     }
 
     // [NEW] 배틀 메뉴 (임시)
-    public void startBattleView(String username) throws SQLException {
+    public void startBattleView(User user) throws SQLException {
         clearConsole();
         System.out.println("=================================================");
         System.out.println("                [ 야생 풀숲 ]");
         System.out.println("=================================================");
-        System.out.println("\n    " + username + "은(는) 풀숲에 발을 들여놓았다...");
+        System.out.println("\n    " + user.getUsername() + "은(는) 풀숲에 발을 들여놓았다...");
         sleep(1000);
         System.out.println("    부스럭...");
         sleep(500);
@@ -221,8 +222,10 @@ public class KonketmonView {
             System.out.println("=================================================");
             System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
             System.out.println("=================================================");
+            sleep(1000);
             // 실제 배틀 메뉴 호출
-            displayBattleMenu(username, monster);
+            displayBattleMenu(user, monster);
+
 
         } catch (SQLException e) {
             System.out.println("\n    [DB 오류] 야생 몬스터를 만나는 중 오류가 발생했습니다.");
@@ -234,13 +237,14 @@ public class KonketmonView {
     /**
      * 실제 배틀 메뉴 (아스키 아트 + 1.공격 2.포획 3.도망)
      */
-    public void displayBattleMenu(String username, Monster monster) throws SQLException {
+    public void displayBattleMenu(User user, Monster monster) throws SQLException {
         boolean isBattling = true;
-
+        clearConsole();
         while (isBattling) {
             // 1. 아스키 아트 표시
             System.out.println(monster.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
-            System.out.println("======== 몬스터의 현재 체력 : " + monster.getHP()+" ===========");
+            System.out.println("======== "+ monster.getName() +"의 현재 체력 : " + monster.getHP()+" ===========");
+            System.out.println("========    나의 현재 체력 : " + user.getHP()+" ===========");
             System.out.println("=================================================");
             System.out.println("\n    무엇을 하시겠습니까?\n");
             System.out.println("-------------------------------------------------");
@@ -257,10 +261,19 @@ public class KonketmonView {
             switch (choice) {
                 case "1":
                     // TODO: 컨트롤러의 '공격' 로직 호출
-                    // boolean battleContinues = konketController.attackMonster(username, monsterName);
-                    // if (!battleContinues) isBattling = false; // 배틀 종료 (승리/패배)
+                     boolean battleContinues = konketController.attackMonster(user, monster);
+                     if (!battleContinues) {
+                         isBattling = false;
+                         System.out.println("======== "+ monster.getName() +"에게 승리했다!=========");
+                     }
+                     else{
+                         battleContinues = konketController.attackUser(user,monster);
+                         if (!battleContinues) {
+                             isBattling = false;
+                             System.out.println("======== "+ user.getUsername() +"은 눈 앞이 아득해졌다.. =========");
+                         }
+                     }
 
-                    System.out.println("\n    (공격 기능 구현 중...)");
                     sleep(1500);
                     break;
                 case "2":
@@ -277,7 +290,7 @@ public class KonketmonView {
                     sleep(1500);
                     break;
                 case "3":
-                    System.out.println("\n    " + username + "은(는) 재빨리 도망쳤다!");
+                    System.out.println("\n    " + user.getUsername() + "은(는) 재빨리 도망쳤다!");
                     sleep(1500);
                     isBattling = false; // while 루프 종료 -> loggedInMenu로 복귀
                     break;
