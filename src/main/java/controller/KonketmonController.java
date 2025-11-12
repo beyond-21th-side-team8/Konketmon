@@ -49,6 +49,11 @@ public class KonketmonController {
         
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
+
     public boolean loginUser(String username, String password) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE id=? AND pw=?");
         stmt.setString(1, username);
@@ -69,5 +74,41 @@ public class KonketmonController {
         int result = stmt.executeUpdate();
         user = new User(username,100,false);
         return result == 1;
+    }
+
+    public boolean attackMonster(User user, Monster monster) {
+        int power = monster.getPower();
+        System.out.println();
+        System.out.println("=================================================");
+        System.out.println(monster.getName()+ "에게 " + power +"만큼 피해를 입혔다!");
+        System.out.println("-------------------------------------------------");
+
+        monster.setHP(monster.getHP() - power);
+
+        if(monster.getHP() <= 0) {
+            return false;
+        }
+        else{
+            return true;
+        }
+
+    }
+
+    public boolean attackUser(User user, Monster monster) {
+        int power = monster.getPower();
+        System.out.println();
+        System.out.println();
+        System.out.println("=================================================");
+        System.out.println("나는 " + monster.getName() + "에게 "+ power +"만큼 피해를 입었다!");
+        System.out.println("-------------------------------------------------");
+
+        user.setHP(user.getHP() - power);
+
+        if(user.getHP() <= 0) {
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }
