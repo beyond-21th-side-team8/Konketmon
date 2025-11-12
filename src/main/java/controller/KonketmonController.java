@@ -11,6 +11,7 @@ public class KonketmonController {
     Connection conn;
     List<Monster> monsterSet = new ArrayList<Monster>();
     User user = null;
+    Set<Monster> capturedMonster = new HashSet<>();
 
     public KonketmonController(Connection conn) throws SQLException {
         this.conn = conn;
@@ -77,7 +78,7 @@ public class KonketmonController {
     }
 
     public boolean attackMonster(User user, Monster monster) {
-        int power = monster.getPower();
+        int power = user.getPower();
         System.out.println();
         System.out.println("=================================================");
         System.out.println(monster.getName()+ "에게 " + power +"만큼 피해를 입혔다!");
@@ -110,5 +111,27 @@ public class KonketmonController {
         else{
             return true;
         }
+    }
+
+
+    public boolean catchMonster(User user, Monster monster) {
+        Random rand = new Random();
+
+        final int MAXHP = 100;
+        final double BASECATCHRATE = 0.05;
+
+        double currCatchRate;
+        double currHP = user.getHP();
+
+        double hpRatio = (double) currHP / MAXHP;
+        //포획율 계산
+        currCatchRate = BASECATCHRATE + (1-hpRatio)*0.9;
+
+        if (currCatchRate>0.95) currCatchRate = 0.95;
+
+        double roll = rand.nextDouble();
+        boolean isCaptured = roll < currCatchRate;
+
+        return isCaptured;
     }
 }
