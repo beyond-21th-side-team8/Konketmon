@@ -289,7 +289,7 @@ public class KonketmonView {
                     break;
                 case "2":
                     // TODO: 컨트롤러의 '포획' 로직 호출
-                    boolean isSuccess = konketController.catchMonster(user, monster);
+                    boolean isSuccess = konketController.catchMonster(monster);
                     if (isSuccess) {
                         System.out.println("\n    " + monster.getName() + "을(를) 잡았다!");
                         isBattling = false;
