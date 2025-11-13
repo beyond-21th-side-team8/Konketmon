@@ -47,7 +47,7 @@ public class KonketmonController {
         int randNum = rand.nextInt(monsterSet.size());
 
         return new Monster(monsterSet.get(randNum).getName(),monsterSet.get(randNum).getAsciiArt(),monsterSet.get(randNum).getHP());
-        
+
     }
 
     public User getUser() {
@@ -59,10 +59,10 @@ public class KonketmonController {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE id=? AND pw=?");
         stmt.setString(1, username);
         stmt.setString(2, password);
-       ResultSet rs = stmt.executeQuery();
-       while (rs.next()) {
-           user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
-       }
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
+        }
         return rs != null;
     }
 
@@ -133,5 +133,34 @@ public class KonketmonController {
         boolean isCaptured = roll < currCatchRate;
 
         return isCaptured;
+    }
+
+    public void saveData(User user) throws SQLException {
+        String sql = "UPDATE user SET HP = ?, is_saved = TRUE where id = ?";
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, user.getHP());
+            pstmt.setString(2, user.getUsername());
+
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            new RuntimeException(e);
+        }
+        finally {
+            pstmt.close();
+        }
+    }
+
+    public void removeUser(User user) {
+        String sql = "DELETE FROM user WHERE id = ?";
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, this.user.getUsername());
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            new RuntimeException(e);
+        }
     }
 }
