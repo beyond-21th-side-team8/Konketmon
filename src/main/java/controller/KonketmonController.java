@@ -60,10 +60,12 @@ public class KonketmonController {
         stmt.setString(1, username);
         stmt.setString(2, password);
         ResultSet rs = stmt.executeQuery();
+
         while (rs.next()) {
-            user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
+            this.user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
         }
-        return rs != null;
+
+        return this.user != null;
     }
 
     public boolean registerUser(String username, String password) throws SQLException {
@@ -132,7 +134,7 @@ public class KonketmonController {
         double roll = rand.nextDouble();
         boolean isCaptured = roll < currCatchRate;
 
-        int printCurrCatchRate = (int) Math.round(currCatchRate)/100;
+        int printCurrCatchRate = (int) Math.round(currCatchRate*100);
         System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
 
         if (isCaptured) {
