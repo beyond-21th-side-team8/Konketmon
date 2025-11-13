@@ -114,24 +114,30 @@ public class KonketmonController {
     }
 
 
-    public boolean catchMonster(User user, Monster monster) {
+    public boolean catchMonster(Monster monster) {
         Random rand = new Random();
 
         final int MAXHP = 100;
         final double BASECATCHRATE = 0.05;
 
         double currCatchRate;
-        double currHP = user.getHP();
+        double currHP = monster.getHP();
 
         double hpRatio = (double) currHP / MAXHP;
         //포획율 계산
-        currCatchRate = BASECATCHRATE + (1-hpRatio)*0.9;
+        currCatchRate = BASECATCHRATE + (1-hpRatio)*0.7;
 
         if (currCatchRate>0.95) currCatchRate = 0.95;
 
         double roll = rand.nextDouble();
         boolean isCaptured = roll < currCatchRate;
 
+        int printCurrCatchRate = (int) Math.round(currCatchRate)/100;
+        System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
+
+        if (isCaptured) {
+            capturedMonster.add(monster);
+        }
         return isCaptured;
     }
 
