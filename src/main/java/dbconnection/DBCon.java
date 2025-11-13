@@ -8,6 +8,7 @@ public class DBCon {
     private static Connection conn;
 
     public static Connection getConnection() throws SQLException {
+//        String url = "jdbc:mariadb://localhost:3306/mon";
         String url = "jdbc:mariadb://192.168.0.11:3306/konketmon";
         String user = "root";
         String password = "mariadb1";
