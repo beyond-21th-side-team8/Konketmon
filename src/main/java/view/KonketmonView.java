@@ -184,7 +184,18 @@ public class KonketmonView {
                     break;
                 case "3":
                     System.out.println("\n    모험을 종료하고 메인 메뉴로 돌아갑니다...");
-                    System.out.println("    (데이터가 자동으로 저장됩니다)");
+                    if(!user.isSaved()) {
+                        System.out.println("    (데이터가 자동으로 저장됩니다)");
+                        konketController.saveData(user);
+                    }
+                    else{
+                        clearConsole();
+                        System.out.println("도망친 곳에 낙원은 없습니다.");
+                        sleep(1500);
+                        clearConsole();
+                        System.out.println("현재 사용자 계정을 삭제합니다.");
+                        konketController.removeUser(user);
+                    }
                     sleep(2000); // 2초 대기
                     isRunning = false; // while 루프 종료 -> displayMainMenu로 복귀
                     break;
@@ -261,30 +272,30 @@ public class KonketmonView {
             switch (choice) {
                 case "1":
                     // TODO: 컨트롤러의 '공격' 로직 호출
-                     boolean battleContinues = konketController.attackMonster(user, monster);
-                     if (!battleContinues) {
-                         isBattling = false;
-                         System.out.println("======== "+ monster.getName() +"에게 승리했다!=========");
-                     }
-                     else{
-                         battleContinues = konketController.attackUser(user,monster);
-                         if (!battleContinues) {
-                             isBattling = false;
-                             System.out.println("======== "+ user.getUsername() +"은 눈 앞이 아득해졌다.. =========");
-                         }
-                     }
+                    boolean battleContinues = konketController.attackMonster(user, monster);
+                    if (!battleContinues) {
+                        isBattling = false;
+                        System.out.println("======== "+ monster.getName() +"에게 승리했다!=========");
+                    }
+                    else{
+                        battleContinues = konketController.attackUser(user,monster);
+                        if (!battleContinues) {
+                            isBattling = false;
+                            System.out.println("======== "+ user.getUsername() +"은 눈 앞이 아득해졌다.. =========");
+                        }
+                    }
 
                     sleep(1500);
                     break;
                 case "2":
                     // TODO: 컨트롤러의 '포획' 로직 호출
-                     boolean isSuccess = konketController.catchMonster(user, monster);
-                     if (isSuccess) {
-                         System.out.println("\n    " + monster.getName() + "을(를) 잡았다!");
-                         isBattling = false;
-                     } else {
-                         System.out.println("\n    ...포획에 실패했다!");
-                     }
+                    boolean isSuccess = konketController.catchMonster(user, monster);
+                    if (isSuccess) {
+                        System.out.println("\n    " + monster.getName() + "을(를) 잡았다!");
+                        isBattling = false;
+                    } else {
+                        System.out.println("\n    ...포획에 실패했다!");
+                    }
 
                     sleep(1500);
                     break;
