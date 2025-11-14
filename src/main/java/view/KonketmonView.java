@@ -1,7 +1,7 @@
 package view;
 
 import controller.KonketmonController;
-import model.Monster;
+import model.Konketmon;
 import model.User;
 
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class KonketmonView {
     Scanner scanner = new Scanner(System.in);
-    Monster monster = null;
+    Konketmon konketmon = null;
     // [MODIFIED] 컨트롤러는 생성자에서 받아옵니다.
     KonketmonController konketController;
     public KonketmonView(KonketmonController konketController) {
@@ -187,7 +187,7 @@ public class KonketmonView {
                     System.out.println("\n    모험을 종료하고 메인 메뉴로 돌아갑니다...");
                     if(!user.isSaved()) {
                         System.out.println("    (데이터가 자동으로 저장됩니다)");
-                        konketController.saveData(user);
+                        konketController.saveData();
                     }
                     else{
                         clearConsole();
@@ -195,7 +195,7 @@ public class KonketmonView {
                         sleep(1500);
                         clearConsole();
                         System.out.println("현재 사용자 계정을 삭제합니다.");
-                        konketController.removeUser(user);
+                        konketController.removeUser();
                     }
                     sleep(2000); // 2초 대기
                     isRunning = false; // while 루프 종료 -> displayMainMenu로 복귀
@@ -221,22 +221,22 @@ public class KonketmonView {
 
         try {
             // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
-            Monster monster = konketController.findWildMonster();
+            Konketmon konketmon = konketController.findWildMonster();
 
-            if (monster == null) {
+            if (konketmon == null) {
                 System.out.println("\n    ...아무것도 나오지 않았다.");
                 sleep(500);
                 return; // loggedInMenu로 복귀
             }
 
-            String monsterName = monster.getName();
+            String monsterName = konketmon.getName();
 
             System.out.println("=================================================");
             System.out.println("    앗! 야생의 " + monsterName + "(이)가 나타났다!");
             System.out.println("=================================================");
             sleep(1000);
             // 실제 배틀 메뉴 호출
-            displayBattleMenu(user, monster);
+            displayBattleMenu(user, konketmon);
 
 
         } catch (SQLException e) {
@@ -249,13 +249,13 @@ public class KonketmonView {
     /**
      * 실제 배틀 메뉴 (아스키 아트 + 1.공격 2.포획 3.도망)
      */
-    public void displayBattleMenu(User user, Monster monster) throws SQLException {
+    public void displayBattleMenu(User user, Konketmon konketmon) throws SQLException {
         boolean isBattling = true;
         clearConsole();
         while (isBattling) {
             // 1. 아스키 아트 표시
-            System.out.println(monster.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
-            System.out.println("======== "+ monster.getName() +"의 현재 체력 : " + monster.getHP()+" ===========");
+            System.out.println(konketmon.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
+            System.out.println("======== "+ konketmon.getName() +"의 현재 체력 : " + konketmon.getHP()+" ===========");
             System.out.println("========    나의 현재 체력 : " + user.getHP()+" ===========");
             System.out.println("=================================================");
             System.out.println("\n    무엇을 하시겠습니까?\n");
@@ -273,13 +273,13 @@ public class KonketmonView {
             switch (choice) {
                 case "1":
                     // TODO: 컨트롤러의 '공격' 로직 호출
-                    boolean battleContinues = konketController.attackMonster(user, monster);
+                    boolean battleContinues = konketController.attackMonster(user, konketmon);
                     if (!battleContinues) {
                         isBattling = false;
-                        System.out.println("======== "+ monster.getName() +"에게 승리했다!=========");
+                        System.out.println("======== "+ konketmon.getName() +"에게 승리했다!=========");
                     }
                     else{
-                        battleContinues = konketController.attackUser(user,monster);
+                        battleContinues = konketController.attackUser(user, konketmon);
                         if (!battleContinues) {
                             isBattling = false;
                             System.out.println("======== "+ user.getUsername() +"은 눈 앞이 아득해졌다.. =========");
@@ -290,9 +290,9 @@ public class KonketmonView {
                     break;
                 case "2":
                     // TODO: 컨트롤러의 '포획' 로직 호출
-                    boolean isSuccess = konketController.catchMonster(monster);
+                    boolean isSuccess = konketController.catchMonster(konketmon);
                     if (isSuccess) {
-                        System.out.println("\n    " + monster.getName() + "을(를) 잡았다!");
+                        System.out.println("\n    " + konketmon.getName() + "을(를) 잡았다!");
                         isBattling = false;
                     } else {
                         System.out.println("\n    ...포획에 실패했다!");
@@ -401,12 +401,12 @@ public class KonketmonView {
             System.out.println("                [ 상세 정보 ]");
             System.out.println("-------------------------------------------------");
 
-            Monster monster = konketController.getKonketmonSpecific(monsterDbId);
-            if(monster == null) {
+            Konketmon konketmon = konketController.getKonketmonSpecific(monsterDbId);
+            if(konketmon == null) {
                 System.out.println("잘못 입력하셨습니다. 존재하지않는 콘켓몬입니다.");
             }
-            System.out.println("이름 : " + monster.getName());
-            System.out.println(monster.getAsciiArt());
+            System.out.println("이름 : " + konketmon.getName());
+            System.out.println(konketmon.getAsciiArt());
 
             System.out.println("\n=================================================");
             System.out.println("    1. 오박사에게 보내기  2. 놓아주기  3. 뒤로 가기");
@@ -420,14 +420,14 @@ public class KonketmonView {
                 case "2":
                     String actionText = (choice.equals("1")) ? "오박사에게 보냅니다" : "놓아줍니다";
 
-                    System.out.println("\n    정말로 " + monster.getName() + "을(를) " + actionText + "? (y/n)");
+                    System.out.println("\n    정말로 " + konketmon.getName() + "을(를) " + actionText + "? (y/n)");
                     System.out.print("    입력: ");
                     String confirm = scanner.nextLine().toLowerCase();
 
                     if (confirm.equals("y")) {
-                        int result = konketController.deleteKonket(monster.getId());
-                        if(result == 1){
-                            System.out.println("\n    " + monster.getName() + "이(가) 떠났습니다...");
+                        boolean result = konketController.deleteKonket(konketmon.getId());
+                        if(result){
+                            System.out.println("\n    " + konketmon.getName() + "이(가) 떠났습니다...");
                             sleep(1500);
                         }
 

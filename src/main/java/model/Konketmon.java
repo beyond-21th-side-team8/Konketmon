@@ -2,7 +2,7 @@ package model;
 
 import java.util.Random;
 
-public class Monster {
+public class Konketmon {
     private int id;
     private String name;
     private String asciiArt;
@@ -21,11 +21,11 @@ public class Monster {
         this.HP = HP;
     }
 
-    public Monster(int HP) {
+    public Konketmon(int HP) {
         this.HP = HP;
     }
 
-    public Monster(String name, String asciiArt, int HP) {
+    public Konketmon(String name, String asciiArt, int HP) {
         this.name = name;
         this.asciiArt = asciiArt;
         this.HP = HP;
@@ -47,7 +47,7 @@ public class Monster {
         this.asciiArt = asciiArt;
     }
 
-    public Monster(int id, String name, String asciiArt, int HP) {
+    public Konketmon(int id, String name, String asciiArt, int HP) {
         this.id = id;
         this.name = name;
         this.asciiArt = asciiArt;
