@@ -178,9 +178,9 @@ public class KonketmonController {
     public void initKonketmon(){
         PreparedStatement stmt = null;
         String sql = "SELECT konketmon.id, konketmon.name, konketmon.hp, konketmon.ascii_art " +
-                "from poketbox " +
-                "join konketmon on konketmon.id = poketbox.konket_id " +
-                "where poketbox.user_id = ?";
+                "from konketdex " +
+                "join konketmon on konketmon.id = konketdex.konket_id " +
+                "where konketdex.user_id = ?";
 
         try{
             stmt = conn.prepareStatement(sql);
@@ -224,7 +224,7 @@ public class KonketmonController {
     }
 
     public int deleteKonket(int id) {
-        String sql = "DELETE FROM poketbox WHERE konket_id = ?";
+        String sql = "DELETE FROM konketdex WHERE konket_id = ?";
         PreparedStatement pstmt = null;
         int result = 0;
         try{
@@ -249,7 +249,7 @@ public class KonketmonController {
     }
 
     public int sendKonketDex(Monster monster){
-        String sql = "INSERT INTO poketbox (user_id, konket_id) VALUES (?,?)";
+        String sql = "INSERT INTO konketdex (user_id, konket_id) VALUES (?,?)";
         PreparedStatement pstmt = null;
         int result = 0;
         try{
