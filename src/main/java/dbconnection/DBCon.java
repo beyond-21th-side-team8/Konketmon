@@ -7,14 +7,19 @@ import java.sql.SQLException;
 public class DBCon {
     private static Connection conn;
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection()  {
 //        String url = "jdbc:mariadb://localhost:3306/mon";
         String url = "jdbc:mariadb://192.168.0.11:3306/konketmon";
         String user = "root";
         String password = "mariadb1";
 
         if (conn == null) {
-            conn = DriverManager.getConnection(url, user, password);
+
+            try {
+                conn = DriverManager.getConnection(url, user, password);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return conn;
     }

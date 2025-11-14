@@ -1,221 +1,166 @@
 package controller;
 
 
-import model.Monster;
+import dbconnection.DBCon;
+import model.Konketmon;
 import model.User;
+import repository.KonketDexRepository;
+import repository.KonketmonRepository;
+import repository.UserRepository;
+import service.KonketDexService;
+import service.KonketmonService;
+import service.UserService;
 
 import java.sql.*;
 import java.util.*;
 
 public class KonketmonController {
-    Connection conn;
-    List<Monster> monsterSet = new ArrayList<Monster>();
-    User user = null;
-    Set<Monster> capturedMonster = new HashSet<>();
+    Set<Konketmon> capturedKonketmon = null;
+    UserService userService = new UserService();
+    KonketmonService konketmonService = new KonketmonService();
+    KonketDexService konketDexService = new KonketDexService();
 
-    public KonketmonController(Connection conn) throws SQLException {
-        this.conn = conn;
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM konketmon");
-        while (rs.next()) {
-            Monster monster = new Monster(
-                rs.getInt(4),
-                    rs.getString(1),
-                    rs.getString(2),
-                    rs.getInt(3)
 
-            );
-            monsterSet.add(monster);
-        }
-    }
-
-    public void getMonster() throws SQLException {
-        Iterator<Monster> iterator = monsterSet.iterator();
-        while(iterator.hasNext()) {
-            Monster monster = iterator.next();
-            System.out.println(monster);
-        }
+    public KonketmonController() {
+        konketmonService.initKonketmonList();
     }
 
     public void closeConnection() throws SQLException {
-        if (conn != null) {
-            conn.close();
-        }
+        DBCon.closeConnection();
     }
 
-    public Monster findWildMonster() {
+    public Konketmon findWildMonster() {
         Random rand = new Random();
 
-        int randNum = rand.nextInt(monsterSet.size());
+        int randNum = rand.nextInt(konketmonService.getKonketmonList().size());
 
-        return new Monster(monsterSet.get(randNum).getId(),monsterSet.get(randNum).getName(),monsterSet.get(randNum).getAsciiArt(),monsterSet.get(randNum).getHP());
+        return new Konketmon(konketmonService.getKonketmonList().get(randNum).getId(),
+                konketmonService.getKonketmonList().get(randNum).getName(),
+                konketmonService.getKonketmonList().get(randNum).getAsciiArt(),
+                konketmonService.getKonketmonList().get(randNum).getHP());
 
-    }
-
-    public User getUser() {
-        return this.user;
     }
 
 
     public boolean loginUser(String username, String password) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE id=? AND pw=?");
-        stmt.setString(1, username);
-        stmt.setString(2, password);
-        ResultSet rs = stmt.executeQuery();
 
-        while (rs.next()) {
-            this.user = new User(rs.getString(1),rs.getInt(3),rs.getBoolean(4));
-        }
 
-        return this.user != null;
+        return userService.login(username, password);
     }
 
     public boolean registerUser(String username, String password) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO user VALUES ( ?,?,?,?)");
-        stmt.setString(1, username);
-        stmt.setString(2, password);
-        stmt.setInt(3, 100);
-        stmt.setBoolean(4, false);
-        int result = stmt.executeUpdate();
-        user = new User(username,100,false);
-        return result == 1;
+
+        return userService.register(username, password);
+
     }
 
-    public boolean attackMonster(User user, Monster monster) {
+    public boolean attackMonster(User user, Konketmon konketmon) {
         int power = user.getPower();
         System.out.println();
         System.out.println("=================================================");
-        System.out.println(monster.getName()+ "에게 " + power +"만큼 피해를 입혔다!");
+        System.out.println(konketmon.getName() + "에게 " + power + "만큼 피해를 입혔다!");
         System.out.println("-------------------------------------------------");
 
-        monster.setHP(monster.getHP() - power);
+        konketmon.setHP(konketmon.getHP() - power);
 
-        if(monster.getHP() <= 0) {
+        if (konketmon.getHP() <= 0) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
 
     }
 
-    public boolean attackUser(User user, Monster monster) {
-        int power = monster.getPower();
+    public boolean attackUser(User user, Konketmon konketmon) {
+        int power = konketmon.getPower();
         System.out.println();
         System.out.println();
         System.out.println("=================================================");
-        System.out.println("나는 " + monster.getName() + "에게 "+ power +"만큼 피해를 입었다!");
+        System.out.println("나는 " + konketmon.getName() + "에게 " + power + "만큼 피해를 입었다!");
         System.out.println("-------------------------------------------------");
 
         user.setHP(user.getHP() - power);
 
-        if(user.getHP() <= 0) {
+        if (user.getHP() <= 0) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
 
 
-    public boolean catchMonster(Monster monster) {
+    public boolean catchMonster(Konketmon konketmon) {
         Random rand = new Random();
 
         final int MAXHP = 100;
         final double BASECATCHRATE = 0.05;
 
         double currCatchRate;
-        double currHP = monster.getHP();
+        double currHP = konketmon.getHP();
 
         double hpRatio = (double) currHP / MAXHP;
         //포획율 계산
-        currCatchRate = BASECATCHRATE + (1-hpRatio)*0.7;
+        currCatchRate = BASECATCHRATE + (1 - hpRatio) * 0.7;
 
-        if (currCatchRate>0.95) currCatchRate = 0.95;
+        if (currCatchRate > 0.95) currCatchRate = 0.95;
 
         double roll = rand.nextDouble();
         boolean isCaptured = roll < currCatchRate;
 
-        int printCurrCatchRate = (int) Math.round(currCatchRate*100);
+        int printCurrCatchRate = (int) Math.round(currCatchRate * 100);
         System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
 
         if (isCaptured) {
-            capturedMonster.add(monster);
-            int result = sendKonketDex(monster);
+            capturedKonketmon.add(konketmon);
+            sendKonketDex(konketmon);
         }
         return isCaptured;
     }
 
-    public void saveData(User user) throws SQLException {
-        String sql = "UPDATE user SET HP = ?, is_saved = TRUE where id = ?";
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, user.getHP());
-            pstmt.setString(2, user.getUsername());
-
-            pstmt.executeUpdate();
-        }catch (SQLException e){
-            new RuntimeException(e);
-        }
-        finally {
-            pstmt.close();
+    public void saveData() throws SQLException {
+        User user = userService.getUser();
+        boolean isSuccess = userService.saveData(user);
+        if (!isSuccess) {
+            System.out.println("저장에 실패했습니다.");
         }
     }
 
-    public void removeUser(User user) {
-        String sql = "DELETE FROM user WHERE id = ?";
-        PreparedStatement pstmt = null;
-        try{
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, this.user.getUsername());
-            pstmt.executeUpdate();
-        }catch (SQLException e){
-            new RuntimeException(e);
+    public void removeUser() {
+        User user = userService.getUser();
+        boolean isSuccess = userService.deleteUser(user);
+        if (!isSuccess) {
+            System.out.println("삭제에 실패했습니다.");
         }
     }
 
-    public void initKonketmon(){
-        PreparedStatement stmt = null;
-        String sql = "SELECT konketmon.id, konketmon.name, konketmon.hp, konketmon.ascii_art " +
-                "from konketdex " +
-                "join konketmon on konketmon.id = konketdex.konket_id " +
-                "where konketdex.user_id = ?";
-
-        try{
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, this.user.getUsername() );
-            ResultSet rset = stmt.executeQuery();
-            while(rset.next()){
-                Monster monster = new Monster(rset.getInt(1),rset.getString(2),rset.getString(4),rset.getInt(3));
-                this.capturedMonster.add(monster);
-            }
-        }
-        catch (SQLException e){
-            new RuntimeException(e);
+    public void initKonketmon() {
+        User user = userService.getUser();
+        this.capturedKonketmon = konketDexService.getKonketdex(user);
+        if (capturedKonketmon == null) {
+            capturedKonketmon = new HashSet<>();
         }
     }
 
     public int getMyKonket() {
 
-        Iterator<Monster> iterator = capturedMonster.iterator();
-        int i=1;
-        while(iterator.hasNext()) {
-            Monster monster = iterator.next();
-            System.out.println(i +". "+monster.getName());
+        Iterator<Konketmon> iterator = capturedKonketmon.iterator();
+        int i = 1;
+        while (iterator.hasNext()) {
+            Konketmon konketmon = iterator.next();
+            System.out.println(i + ". " + konketmon.getName());
             i++;
         }
 
-        return this.capturedMonster.size();
+        return this.capturedKonketmon.size();
     }
 
-    public Monster getKonketmonSpecific(int id){
-        Iterator<Monster> iterator = this.capturedMonster.iterator();
-        int i=1;
-        while(iterator.hasNext()) {
-            Monster monster = iterator.next();
-            if(i == id) {
-                return monster;
+    public Konketmon getKonketmonSpecific(int id) {
+        Iterator<Konketmon> iterator = this.capturedKonketmon.iterator();
+        int i = 1;
+        while (iterator.hasNext()) {
+            Konketmon konketmon = iterator.next();
+            if (i == id) {
+                return konketmon;
             }
             i++;
         }
@@ -223,43 +168,24 @@ public class KonketmonController {
 
     }
 
-    public int deleteKonket(int id) {
-        String sql = "DELETE FROM konketdex WHERE konket_id = ?";
-        PreparedStatement pstmt = null;
-        int result = 0;
-        try{
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, id);
-            result = pstmt.executeUpdate();
-        }catch (SQLException e){
-            new RuntimeException(e);
-        }
-
-        if (result > 0) {
-            Iterator<Monster> iterator = this.capturedMonster.iterator();
-            while(iterator.hasNext()) {
-                Monster monster = iterator.next();
-                if(monster.getId() == id) {
-                    this.capturedMonster.remove(monster);
-                }
-            }
-        }
-
-        return result;
+    public User getUser() {
+        return userService.getUser();
     }
 
-    public int sendKonketDex(Monster monster){
-        String sql = "INSERT INTO konketdex (user_id, konket_id) VALUES (?,?)";
-        PreparedStatement pstmt = null;
-        int result = 0;
-        try{
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, this.user.getUsername());
-            pstmt.setInt(2, monster.getId());
-            result = pstmt.executeUpdate();
-        }catch (SQLException e){
-            new RuntimeException(e);
+    public boolean deleteKonket(int id) {
+        boolean isSuccess = konketDexService.deleteKonketMonInKonketdex(id, capturedKonketmon);
+        if (!isSuccess) {
+            System.out.println("해당 콘켓몬을 삭제하지 못했습니다");
         }
-        return result;
+        return isSuccess;
+    }
+
+    public boolean sendKonketDex(Konketmon konketmon) {
+        User user = userService.getUser();
+        boolean isSuccess = konketDexService.sendKonketDex(user, konketmon);
+        if (!isSuccess) {
+            System.out.println("해당 콘켓몬을 도감에 넣지 못했습니다.");
+        }
+        return isSuccess;
     }
 }
