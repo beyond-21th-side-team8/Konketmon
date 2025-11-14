@@ -3,6 +3,7 @@ package model;
 import java.util.Random;
 
 public class Monster {
+    private int id;
     private String name;
     private String asciiArt;
     private int HP;
@@ -44,5 +45,30 @@ public class Monster {
 
     public void setAsciiArt(String asciiArt) {
         this.asciiArt = asciiArt;
+    }
+
+    public Monster(int id, String name, String asciiArt, int HP) {
+        this.id = id;
+        this.name = name;
+        this.asciiArt = asciiArt;
+        this.HP = HP;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Monster{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", asciiArt='" + asciiArt + '\'' +
+                ", HP=" + HP +
+                '}';
     }
 }

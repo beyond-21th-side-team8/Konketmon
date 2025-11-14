@@ -19,9 +19,11 @@ public class KonketmonController {
         ResultSet rs = stmt.executeQuery("SELECT * FROM konketmon");
         while (rs.next()) {
             Monster monster = new Monster(
+                rs.getInt(4),
                     rs.getString(1),
                     rs.getString(2),
                     rs.getInt(3)
+
             );
             monsterSet.add(monster);
         }
@@ -46,7 +48,7 @@ public class KonketmonController {
 
         int randNum = rand.nextInt(monsterSet.size());
 
-        return new Monster(monsterSet.get(randNum).getName(),monsterSet.get(randNum).getAsciiArt(),monsterSet.get(randNum).getHP());
+        return new Monster(monsterSet.get(randNum).getId(),monsterSet.get(randNum).getName(),monsterSet.get(randNum).getAsciiArt(),monsterSet.get(randNum).getHP());
 
     }
 
@@ -139,6 +141,7 @@ public class KonketmonController {
 
         if (isCaptured) {
             capturedMonster.add(monster);
+            int result = sendKonketDex(monster);
         }
         return isCaptured;
     }
@@ -170,5 +173,93 @@ public class KonketmonController {
         }catch (SQLException e){
             new RuntimeException(e);
         }
+    }
+
+    public void initKonketmon(){
+        PreparedStatement stmt = null;
+        String sql = "SELECT konketmon.id, konketmon.name, konketmon.hp, konketmon.ascii_art " +
+                "from poketbox " +
+                "join konketmon on konketmon.id = poketbox.konket_id " +
+                "where poketbox.user_id = ?";
+
+        try{
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, this.user.getUsername() );
+            ResultSet rset = stmt.executeQuery();
+            while(rset.next()){
+                Monster monster = new Monster(rset.getInt(1),rset.getString(2),rset.getString(4),rset.getInt(3));
+                this.capturedMonster.add(monster);
+            }
+        }
+        catch (SQLException e){
+            new RuntimeException(e);
+        }
+    }
+
+    public int getMyKonket() {
+
+        Iterator<Monster> iterator = capturedMonster.iterator();
+        int i=1;
+        while(iterator.hasNext()) {
+            Monster monster = iterator.next();
+            System.out.println(i +". "+monster.getName());
+            i++;
+        }
+
+        return this.capturedMonster.size();
+    }
+
+    public Monster getKonketmonSpecific(int id){
+        Iterator<Monster> iterator = this.capturedMonster.iterator();
+        int i=1;
+        while(iterator.hasNext()) {
+            Monster monster = iterator.next();
+            if(i == id) {
+                return monster;
+            }
+            i++;
+        }
+        return null;
+
+    }
+
+    public int deleteKonket(int id) {
+        String sql = "DELETE FROM poketbox WHERE konket_id = ?";
+        PreparedStatement pstmt = null;
+        int result = 0;
+        try{
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            result = pstmt.executeUpdate();
+        }catch (SQLException e){
+            new RuntimeException(e);
+        }
+
+        if (result > 0) {
+            Iterator<Monster> iterator = this.capturedMonster.iterator();
+            while(iterator.hasNext()) {
+                Monster monster = iterator.next();
+                if(monster.getId() == id) {
+                    this.capturedMonster.remove(monster);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public int sendKonketDex(Monster monster){
+        String sql = "INSERT INTO poketbox (user_id, konket_id) VALUES (?,?)";
+        PreparedStatement pstmt = null;
+        int result = 0;
+        try{
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, this.user.getUsername());
+            pstmt.setInt(2, monster.getId());
+            result = pstmt.executeUpdate();
+        }catch (SQLException e){
+            new RuntimeException(e);
+        }
+        return result;
     }
 }
