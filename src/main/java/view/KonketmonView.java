@@ -133,6 +133,7 @@ public class KonketmonView {
             boolean isLoggedIn = konketController.loginUser(username, password);
 
             if (isLoggedIn) {
+                konketController.initKonketmon();
                 System.out.println("\n    " + username + " 님, 다시 오셨군요!");
                 System.out.println("    모험을 계속합니다...");
                 sleep(2000);
@@ -312,23 +313,6 @@ public class KonketmonView {
         }
     }
 
-    // [NEW] 도감 메뉴 (임시)
-    public void showPokedexView(String username) {
-        clearConsole();
-        System.out.println("=================================================");
-        System.out.println("                 [ 콘켓몬 도감 ]");
-        System.out.println("=================================================");
-
-        // --- 컨트롤러가 DB에서 도감 정보를 가져옴 ---
-        // String pokedexData = konketController.getPokedexForUser(username);
-        // System.out.println(pokedexData);
-
-        System.out.println("\n    " + username + " 님이 발견/포획한 콘켓몬 목록입니다.");
-        System.out.println("\n    (도감 기능 구현 중...)");
-        System.out.println("\n    아무 키나 눌러 메뉴로 돌아갑니다.");
-        scanner.nextLine();
-    }
-
     // --- 유틸리티 함수 ---
 
     // 콘솔을 지우는 함수 (운영체제마다 방식이 다름)
@@ -345,6 +329,122 @@ public class KonketmonView {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             // InterruptedException 처리
+        }
+    }
+
+    // ... (KonketmonView의 다른 메서드들) ...
+
+// [MODIFIED] 도감 뷰 - 리스트 표시 및 상세 보기 진입
+    /**
+     * 컨트롤러에서 '내 몬스터' 목록을 가져와 리스트로 보여줍니다.
+     * 사용자가 번호를 선택하면 상세 뷰(displayPokedexDetail)를 호출합니다.
+     */
+    public void showPokedexView(String username) throws SQLException {
+
+        // [중요] 상세 보기에서 몬스터를 삭제하고 돌아왔을 때 목록을 갱신하기 위해
+        // while(true) 루프를 사용합니다.
+        boolean isViewingPokedex = true;
+        while (isViewingPokedex) {
+            clearConsole();
+            System.out.println("=================================================");
+            System.out.println("                 [ 콘켓몬 도감 ]");
+            System.out.println("-------------------------------------------------");
+            System.out.println("    " + username + " 님이 포획한 콘켓몬 목록입니다.\n");
+
+            int konketdexLength = konketController.getMyKonket();
+            // 몬스터가 한 마리도 없을 경우
+            if (konketdexLength == 0) {
+                System.out.println("    포획한 콘켓몬이 한 마리도 없습니다...");
+                System.out.println("\n    아무 키나 눌러 메뉴로 돌아갑니다.");
+                scanner.nextLine();
+                return; // loggedInMenu로 복귀
+            }
+
+
+
+            System.out.println("\n-------------------------------------------------");
+            System.out.println("    상세 정보를 볼려면 해당 번호를,");
+            System.out.println("    메인 메뉴로 돌아가려면 -1을 입력해주세요.");
+            System.out.println("=================================================");
+            System.out.print("    입력: ");
+
+            String choice = scanner.nextLine();
+
+            if (choice.equals("-1")) {
+                isViewingPokedex = false; // 루프 종료 -> loggedInMenu로 복귀
+            }
+            else if(choice == "0" || Integer.parseInt(choice) <= konketdexLength){
+                displayPokedexDetail(Integer.parseInt(choice));
+            }
+            else {
+                System.out.println("\n    잘못된 번호입니다. 목록에 있는 번호나 -1을 입력해주세요.");
+                sleep(1500);
+            }
+        }
+    }
+
+
+// [NEW] -----------------------------------------------------------------
+// 요청하신 '상세 보기 UI'
+// -----------------------------------------------------------------------
+    /**
+     * 몬스터 한 마리의 상세 정보(아스키 아트)와
+     * 관리 메뉴(보내기, 놓아주기, 뒤로 가기)를 보여줍니다.
+     */
+    public void displayPokedexDetail(int monsterDbId) throws SQLException {
+
+
+        boolean isViewingDetail = true;
+        while (isViewingDetail) {
+            clearConsole();
+            System.out.println("=================================================");
+            System.out.println("                [ 상세 정보 ]");
+            System.out.println("-------------------------------------------------");
+
+            Monster monster = konketController.getKonketmonSpecific(monsterDbId);
+            if(monster == null) {
+                System.out.println("잘못 입력하셨습니다. 존재하지않는 콘켓몬입니다.");
+            }
+            System.out.println("이름 : " + monster.getName());
+            System.out.println(monster.getAsciiArt());
+
+            System.out.println("\n=================================================");
+            System.out.println("    1. 오박사에게 보내기  2. 놓아주기  3. 뒤로 가기");
+            System.out.println("=================================================");
+            System.out.print("    입력: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                case "2":
+                    String actionText = (choice.equals("1")) ? "오박사에게 보냅니다" : "놓아줍니다";
+
+                    System.out.println("\n    정말로 " + monster.getName() + "을(를) " + actionText + "? (y/n)");
+                    System.out.print("    입력: ");
+                    String confirm = scanner.nextLine().toLowerCase();
+
+                    if (confirm.equals("y")) {
+                        int result = konketController.deleteKonket(monster.getId());
+                        if(result == 1){
+                            System.out.println("\n    " + monster.getName() + "이(가) 떠났습니다...");
+                            sleep(1500);
+                        }
+
+                        isViewingDetail = false; // 상세 뷰 종료 -> 도감 목록으로 복귀
+                    } else {
+                        System.out.println("\n    " + actionText + "를 취소했습니다.");
+                        sleep(1500);
+                    }
+                    break;
+                case "3":
+                    isViewingDetail = false; // 상세 뷰 종료 -> 도감 목록으로 복귀
+                    break;
+                default:
+                    System.out.println("\n    잘못된 입력입니다. 1, 2, 3 중 하나를 선택해주세요.");
+                    sleep(1500);
+                    break;
+            }
         }
     }
 }
