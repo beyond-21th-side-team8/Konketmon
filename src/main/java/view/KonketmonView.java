@@ -4,6 +4,7 @@ import controller.KonketmonController;
 import model.Konketmon;
 import model.User;
 
+import java.lang.ref.Cleaner;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -155,55 +156,80 @@ public class KonketmonView {
     public void loggedInMenu(String username) throws SQLException {
         boolean isRunning = true;
         while (isRunning) {
+
+
+
             clearConsole(); // 화면을 깨끗하게 지우기
             User user = konketController.getUser();
-            // 간단한 필드 아스키 아트
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("  ^^^^      /\\     ^^^         ^^");
-            System.out.println("      ^^   /  \\   ^^^^     ^^      /\\");
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("    [ " + username + " 님의 모험 수첩 ]");
-            System.out.println("-------------------------------------------------");
-            System.out.println();
-            System.out.println("    무엇을 하시겠습니까?");
-            System.out.println();
-            System.out.println("    ▶  1. 배틀하기 (풀숲에 들어간다)");
-            System.out.println("    ▶  2. 콘켓몬 도감 (지금까지 모은 콘켓몬)");
-            System.out.println("    ▶  3. 모험 종료 (로그아웃)");
-            System.out.println();
-            System.out.println("=================================================");
-            System.out.print("    입력: ");
+            boolean isCleared = konketController.isCleared();
+            if (isCleared) {
+                konketController.removeUser();
+                clearConsole();
+                System.out.print("고생 끝에 낙이 오는 건.");
+                sleep(500);
+                System.out.print(".");
+                sleep(500);
+                System.out.print(".");
+                sleep(500);
+                System.out.println(".");
+                sleep(500);
+                clearConsole();
+                System.out.println("꼭 그렇지만도 않습니다.");
+                sleep(1000);
+                clearConsole();
+                System.out.println("계정이 삭제됩니다.");
+                sleep(1000);
+                clearConsole();
+                isRunning = false;
+            } else {
+                // 간단한 필드 아스키 아트
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("  ^^^^      /\\     ^^^         ^^");
+                System.out.println("      ^^   /  \\   ^^^^     ^^      /\\");
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("    [ " + username + " 님의 모험 수첩 ]");
+                System.out.println("-------------------------------------------------");
+                System.out.println();
+                System.out.println("    무엇을 하시겠습니까?");
+                System.out.println();
+                System.out.println("    ▶  1. 배틀하기 (풀숲에 들어간다)");
+                System.out.println("    ▶  2. 콘켓몬 도감 (지금까지 모은 콘켓몬)");
+                System.out.println("    ▶  3. 모험 종료 (로그아웃)");
+                System.out.println();
+                System.out.println("=================================================");
+                System.out.print("    입력: ");
 
-            String choice = scanner.nextLine();
+                String choice = scanner.nextLine();
 
-            switch (choice) {
-                case "1":
-                    startBattleView(user); // 배틀 시작 함수 호출
-                    break;
-                case "2":
-                    showPokedexView(username); // 내 콘켓몬 관리 함수 호출
-                    break;
-                case "3":
-                    System.out.println("\n    모험을 종료하고 메인 메뉴로 돌아갑니다...");
-                    if(!user.isSaved()) {
-                        System.out.println("    (데이터가 자동으로 저장됩니다)");
-                        konketController.saveData();
-                    }
-                    else{
-                        clearConsole();
-                        System.out.println("도망친 곳에 낙원은 없습니다.");
-                        sleep(1500);
-                        clearConsole();
-                        System.out.println("현재 사용자 계정을 삭제합니다.");
-                        konketController.removeUser();
-                    }
-                    sleep(2000); // 2초 대기
-                    isRunning = false; // while 루프 종료 -> displayMainMenu로 복귀
-                    break;
-                default:
-                    System.out.println("\n    잘못된 입력입니다. 1, 2, 3 중 하나를 선택해주세요.");
-                    sleep(1500); // 1.5초 대기
-                    break;
+                switch (choice) {
+                    case "1":
+                        startBattleView(user); // 배틀 시작 함수 호출
+                        break;
+                    case "2":
+                        showPokedexView(username); // 내 콘켓몬 관리 함수 호출
+                        break;
+                    case "3":
+                        System.out.println("\n    모험을 종료하고 메인 메뉴로 돌아갑니다...");
+                        if(!user.isSaved()) {
+                            System.out.println("    (데이터가 자동으로 저장됩니다)");
+                            konketController.saveData();
+                        }
+                        else{
+                            clearConsole();
+                            System.out.println("도망친 곳에 낙원은 없습니다.");
+                            sleep(1500);
+                            clearConsole();
+                            System.out.println("현재 사용자 계정을 삭제합니다.");
+                            konketController.removeUser();
+                        }
+                        sleep(2000); // 2초 대기
+                        isRunning = false; // while 루프 종료 -> displayMainMenu로 복귀
+                        break;
+                    default:
+                        System.out.println("\n    잘못된 입력입니다. 1, 2, 3 중 하나를 선택해주세요.");
+                        sleep(1500); // 1.5초 대기
+                        break;
+                }
             }
         }
     }
@@ -254,6 +280,7 @@ public class KonketmonView {
         clearConsole();
         while (isBattling) {
             // 1. 아스키 아트 표시
+            clearConsole();
             System.out.println(konketmon.getAsciiArt()); // 컨트롤러에서 받아온 아스키 아트 출력
             System.out.println("======== "+ konketmon.getName() +"의 현재 체력 : " + konketmon.getHP()+" ===========");
             System.out.println("========    나의 현재 체력 : " + user.getHP()+" ===========");
@@ -296,6 +323,16 @@ public class KonketmonView {
                         isBattling = false;
                     } else {
                         System.out.println("\n    ...포획에 실패했다!");
+                        battleContinues = konketController.attackUser(user, konketmon);
+                        if (!battleContinues) {
+                            isBattling = false;
+                            System.out.println("======== "+ user.getUsername() +"은 눈 앞이 아득해졌다.. =========");
+                            konketController.removeUser();
+                            sleep(1500);
+                            clearConsole();
+                            System.out.println("계정이 삭제됩니다.");
+                            System.exit(0);
+                        }
                     }
 
                     sleep(1500);

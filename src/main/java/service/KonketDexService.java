@@ -14,6 +14,7 @@ import static dbconnection.DBCon.getConnection;
 
 public class KonketDexService {
     Connection con = getConnection();
+    Set<String> capturedKonketmonNamelist = null;
     Set<Konketmon> capturedKonketmon = null;
     KonketDexRepository konketDexRepository = new KonketDexRepository();
 
@@ -46,22 +47,35 @@ public class KonketDexService {
         int printCurrCatchRate = (int) Math.round(currCatchRate * 100);
         System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
 
-        int prev_size = capturedKonketmon.size();
+        int prev_size = capturedKonketmonNamelist.size();
 
         if (isCaptured) {
-            capturedKonketmon.add(konketmon);
-            if (prev_size == capturedKonketmon.size()) {
+            capturedKonketmonNamelist.add(konketmon.getName());
+
+            if (prev_size == capturedKonketmonNamelist.size()) {
                 // 몬스터를 넣기 전 사이즈와 이후 사이즈가 동일하다면 중복으로 값이 들어가지 않았음을 의미
                 System.out.println("이미 존재하는 콘켓몬입니다.");
-            } else konketDexRepository.sendKonketDex(con, user, konketmon);
+            } else {
+                konketDexRepository.sendKonketDex(con, user, konketmon);
+                capturedKonketmon.add(konketmon);
+            }
         }
         return isCaptured;
     }
 
     public void initCapturedKonketmon(User user) {
         this.capturedKonketmon = konketDexRepository.getMyKonketDex(con, user);
+
         if (capturedKonketmon == null) {
             capturedKonketmon = new HashSet<>();
+        }
+        if (capturedKonketmonNamelist == null) {
+            capturedKonketmonNamelist = new HashSet<>();
+        }
+        Iterator<Konketmon> it = capturedKonketmon.iterator();
+        while (it.hasNext()) {
+            Konketmon konketmon = it.next();
+            capturedKonketmonNamelist.add(konketmon.getName());
         }
     }
 

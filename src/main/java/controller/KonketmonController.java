@@ -109,4 +109,10 @@ public class KonketmonController {
         return konketDexService.deleteKonketmonInKonketdex(id, user);
     }
 
+    public boolean isCleared() {
+        if (konketmonService.getKonketmonList().size()==konketDexService.getMyKonketDex()) {
+            return true;
+        }
+        return false;
+    }
 }
