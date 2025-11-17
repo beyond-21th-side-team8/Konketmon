@@ -22,12 +22,18 @@ public class UserService {
         return user != null;
     }
 
-    public boolean saveData(User user) {
-        return userRepository.saveData(this.con, user);
+    public void saveData() {
+        boolean isSuccess = userRepository.saveData(this.con, this.user);
+        if (!isSuccess) {
+            System.out.println("저장에 실패했습니다.");
+        }
     }
 
-    public boolean deleteUser(User user) {
-        return userRepository.removeUser(this.con, user);
+    public void deleteUser() {
+        boolean isSuccess = userRepository.removeUser(this.con, this.user);
+        if (!isSuccess) {
+            System.out.println("삭제에 실패했습니다.");
+        }
     }
 
     public User getUser() {

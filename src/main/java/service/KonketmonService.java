@@ -6,6 +6,7 @@ import repository.KonketmonRepository;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static dbconnection.DBCon.getConnection;
 
@@ -22,5 +23,16 @@ public class KonketmonService {
 
     public List<Konketmon> getKonketmonList() {
         return konketmonList;
+    }
+
+    public Konketmon findWildKonketmon() {
+        Random rand = new Random();
+
+        int randNum = rand.nextInt(this.konketmonList.size());
+
+        return new Konketmon(this.konketmonList.get(randNum).getId(),
+                this.konketmonList.get(randNum).getName(),
+                this.konketmonList.get(randNum).getAsciiArt(),
+                this.konketmonList.get(randNum).getHP());
     }
 }

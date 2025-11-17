@@ -221,7 +221,7 @@ public class KonketmonView {
 
         try {
             // 컨트롤러가 Map<String, String> 형태로 몬스터 정보를 반환한다고 가정
-            Konketmon konketmon = konketController.findWildMonster();
+            Konketmon konketmon = konketController.findWildKonketmon();
 
             if (konketmon == null) {
                 System.out.println("\n    ...아무것도 나오지 않았다.");
@@ -273,7 +273,7 @@ public class KonketmonView {
             switch (choice) {
                 case "1":
                     // TODO: 컨트롤러의 '공격' 로직 호출
-                    boolean battleContinues = konketController.attackMonster(user, konketmon);
+                    boolean battleContinues = konketController.attackKonketmon(user, konketmon);
                     if (!battleContinues) {
                         isBattling = false;
                         System.out.println("======== "+ konketmon.getName() +"에게 승리했다!=========");
@@ -290,7 +290,7 @@ public class KonketmonView {
                     break;
                 case "2":
                     // TODO: 컨트롤러의 '포획' 로직 호출
-                    boolean isSuccess = konketController.catchMonster(konketmon);
+                    boolean isSuccess = konketController.catchKonketmon(konketmon);
                     if (isSuccess) {
                         System.out.println("\n    " + konketmon.getName() + "을(를) 잡았다!");
                         isBattling = false;
