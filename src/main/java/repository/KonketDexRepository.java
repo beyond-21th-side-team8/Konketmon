@@ -37,7 +37,7 @@ public class KonketDexRepository {
         return myKonketDex;
     }
 
-    public boolean deleteKonketmonInKonketDex(Connection con, int id, String user_id, Set<Konketmon> myKonketDex) {
+    public boolean deleteKonketmonInKonketDex(Connection con, int id, String user_id, Set<Konketmon> myKonketDex, Set<String> nameList) {
         String sql = "DELETE FROM konketdex WHERE konket_id = ? AND user_id = ?";
         int result = 0;
         try (PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -48,15 +48,27 @@ public class KonketDexRepository {
             new RuntimeException(e);
         }
 
+        String name = "";
         if (result > 0) {
             Iterator<Konketmon> iterator = myKonketDex.iterator();
             while (iterator.hasNext()) {
                 Konketmon konketmon = iterator.next();
                 if (konketmon.getId() == id) {
+                    name = konketmon.getName();
                     iterator.remove();
                 }
             }
+
+            Iterator<String> iterator2 = nameList.iterator();
+            while (iterator2.hasNext()) {
+                String namelist = iterator2.next();
+                if (name.equals(namelist)) {
+                    iterator2.remove();
+                }
+            }
         }
+
+
 
         return result > 0;
     }

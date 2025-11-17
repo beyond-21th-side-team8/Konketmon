@@ -19,10 +19,12 @@ public class KonketDexService {
     KonketDexRepository konketDexRepository = new KonketDexRepository();
 
     public boolean deleteKonketmonInKonketdex(int id, User user) {
-        boolean isSuccess = konketDexRepository.deleteKonketmonInKonketDex(con, id, user.getUsername(),this.capturedKonketmon);
+        boolean isSuccess = konketDexRepository.deleteKonketmonInKonketDex(con, id, user.getUsername(),this.capturedKonketmon,this.capturedKonketmonNamelist);
         if (!isSuccess) {
             System.out.println("해당 콘켓몬을 삭제하지 못했습니다");
         }
+
+
         return isSuccess;
     }
 
@@ -77,6 +79,10 @@ public class KonketDexService {
             Konketmon konketmon = it.next();
             capturedKonketmonNamelist.add(konketmon.getName());
         }
+    }
+
+    public int getMyKonketmonSize(){
+        return this.capturedKonketmon.size();
     }
 
     public int getMyKonketDex() {

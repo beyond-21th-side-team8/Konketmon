@@ -110,7 +110,7 @@ public class KonketmonController {
     }
 
     public boolean isCleared() {
-        if (konketmonService.getKonketmonList().size()==konketDexService.getMyKonketDex()) {
+        if (konketmonService.getKonketmonList().size()==konketDexService.getMyKonketmonSize()) {
             return true;
         }
         return false;

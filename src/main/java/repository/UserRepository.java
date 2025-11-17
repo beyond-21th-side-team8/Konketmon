@@ -32,12 +32,12 @@ public class UserRepository {
 
             pstmt.setString(1, username);
             pstmt.setString(2, password);
-            pstmt.setInt(3, 100);
+            pstmt.setInt(3, 150);
             pstmt.setBoolean(4, false);
             int result = pstmt.executeUpdate();
 
             if (result > 0) {
-                user = new User(username, 100, false);
+                user = new User(username, 150, false);
             }
         } catch(SQLIntegrityConstraintViolationException e){
             System.out.println("중복된 아이디가 존재합니다.");

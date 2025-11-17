@@ -104,6 +104,7 @@ public class KonketmonView {
             if (isSuccess) {
                 System.out.println("\n    " + username + " 님, 반갑습니다!");
                 System.out.println("    이제 모험을 시작합니다...");
+                konketController.initKonketmon();
                 sleep(2000);
                 loggedInMenu(username); // [NEW] 로그인 후 메뉴로 이동
             } else {
@@ -156,8 +157,6 @@ public class KonketmonView {
     public void loggedInMenu(String username) throws SQLException {
         boolean isRunning = true;
         while (isRunning) {
-
-
 
             clearConsole(); // 화면을 깨끗하게 지우기
             User user = konketController.getUser();
