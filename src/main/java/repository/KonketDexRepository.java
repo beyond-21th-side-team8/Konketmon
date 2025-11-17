@@ -37,11 +37,12 @@ public class KonketDexRepository {
         return myKonketDex;
     }
 
-    public boolean deleteKonketmonInKonketDex(Connection con, int id, Set<Konketmon> myKonketDex) {
-        String sql = "DELETE FROM konketdex WHERE konket_id = ?";
+    public boolean deleteKonketmonInKonketDex(Connection con, int id, String user_id, Set<Konketmon> myKonketDex) {
+        String sql = "DELETE FROM konketdex WHERE konket_id = ? AND user_id = ?";
         int result = 0;
         try (PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmt.setInt(1, id);
+            pstmt.setString(2, user_id);
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
             new RuntimeException(e);
@@ -52,7 +53,7 @@ public class KonketDexRepository {
             while (iterator.hasNext()) {
                 Konketmon konketmon = iterator.next();
                 if (konketmon.getId() == id) {
-                    myKonketDex.remove(konketmon);
+                    iterator.remove();
                 }
             }
         }

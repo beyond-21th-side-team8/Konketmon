@@ -4,18 +4,13 @@ package controller;
 import dbconnection.DBCon;
 import model.Konketmon;
 import model.User;
-import repository.KonketDexRepository;
-import repository.KonketmonRepository;
-import repository.UserRepository;
 import service.KonketDexService;
 import service.KonketmonService;
 import service.UserService;
 
 import java.sql.*;
-import java.util.*;
 
 public class KonketmonController {
-    Set<Konketmon> capturedKonketmon = null;
     UserService userService = new UserService();
     KonketmonService konketmonService = new KonketmonService();
     KonketDexService konketDexService = new KonketDexService();
@@ -29,32 +24,21 @@ public class KonketmonController {
         DBCon.closeConnection();
     }
 
-    public Konketmon findWildMonster() {
-        Random rand = new Random();
-
-        int randNum = rand.nextInt(konketmonService.getKonketmonList().size());
-
-        return new Konketmon(konketmonService.getKonketmonList().get(randNum).getId(),
-                konketmonService.getKonketmonList().get(randNum).getName(),
-                konketmonService.getKonketmonList().get(randNum).getAsciiArt(),
-                konketmonService.getKonketmonList().get(randNum).getHP());
-
+    public Konketmon findWildKonketmon() {
+        return konketmonService.findWildKonketmon();
     }
 
 
     public boolean loginUser(String username, String password) throws SQLException {
-
-
         return userService.login(username, password);
     }
 
     public boolean registerUser(String username, String password) throws SQLException {
-
         return userService.register(username, password);
 
     }
 
-    public boolean attackMonster(User user, Konketmon konketmon) {
+    public boolean attackKonketmon(User user, Konketmon konketmon) {
         int power = user.getPower();
         System.out.println();
         System.out.println("=================================================");
@@ -89,91 +73,31 @@ public class KonketmonController {
     }
 
 
-    public boolean catchMonster(Konketmon konketmon) {
-        Random rand = new Random();
-
-        final int MAXHP = 100;
-        final double BASECATCHRATE = 0.05;
-
-        double currCatchRate;
-        double currHP = konketmon.getHP();
-
-        double hpRatio = currHP / MAXHP;
-        //포획율 계산
-        currCatchRate = BASECATCHRATE + (1 - hpRatio) * 0.7;
-
-        if (currCatchRate > 0.95) currCatchRate = 0.95;
-
-        double roll = rand.nextDouble();
-        boolean isCaptured = roll < currCatchRate;
-
-        int printCurrCatchRate = (int) Math.round(currCatchRate * 100);
-        System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
-
-        int prev_size = capturedKonketmon.size();
-
-        if (isCaptured) {
-            if (konketmonService.getKonketmonList().size() == capturedKonketmon.size()) {
-                System.out.println("모든 콘켓몬을 이미 잡았습니다.");
-            } else capturedKonketmon.add(konketmon);
-
-            if (prev_size == capturedKonketmon.size()) {
-                // 몬스터를 넣기 전 사이즈와 이후 사이즈가 동일하다면 중복으로 값이 들어가지 않았음을 의미
-                System.out.println("이미 존재하는 콘켓몬입니다.");
-            } else sendKonketDex(konketmon);
-        }
-        return isCaptured;
+    public boolean catchKonketmon(Konketmon konketmon) {
+        User user = userService.getUser();
+        return konketDexService.catchKonketmon(user, konketmon);
     }
 
     public void saveData() throws SQLException {
-        User user = userService.getUser();
-        boolean isSuccess = userService.saveData(user);
-        if (!isSuccess) {
-            System.out.println("저장에 실패했습니다.");
-        }
+        userService.saveData();
     }
 
     public void removeUser() {
-        User user = userService.getUser();
-        boolean isSuccess = userService.deleteUser(user);
-        if (!isSuccess) {
-            System.out.println("삭제에 실패했습니다.");
-        }
+        ;
+        userService.deleteUser();
     }
 
     public void initKonketmon() {
         User user = userService.getUser();
-        this.capturedKonketmon = konketDexService.getKonketdex(user);
-        if (capturedKonketmon == null) {
-            capturedKonketmon = new HashSet<>();
-        }
+        konketDexService.initCapturedKonketmon(user);
     }
 
     public int getMyKonket() {
-
-        Iterator<Konketmon> iterator = capturedKonketmon.iterator();
-        int i = 1;
-        while (iterator.hasNext()) {
-            Konketmon konketmon = iterator.next();
-            System.out.println(i + ". " + konketmon.getName());
-            i++;
-        }
-
-        return this.capturedKonketmon.size();
+        return konketDexService.getMyKonketDex();
     }
 
     public Konketmon getKonketmonSpecific(int id) {
-        Iterator<Konketmon> iterator = this.capturedKonketmon.iterator();
-        int i = 1;
-        while (iterator.hasNext()) {
-            Konketmon konketmon = iterator.next();
-            if (i == id) {
-                return konketmon;
-            }
-            i++;
-        }
-        return null;
-
+        return konketDexService.getKonketmonSpecific(id);
     }
 
     public User getUser() {
@@ -181,19 +105,8 @@ public class KonketmonController {
     }
 
     public boolean deleteKonket(int id) {
-        boolean isSuccess = konketDexService.deleteKonketMonInKonketdex(id, capturedKonketmon);
-        if (!isSuccess) {
-            System.out.println("해당 콘켓몬을 삭제하지 못했습니다");
-        }
-        return isSuccess;
+        User user = userService.getUser();
+        return konketDexService.deleteKonketmonInKonketdex(id, user);
     }
 
-    public boolean sendKonketDex(Konketmon konketmon) {
-        User user = userService.getUser();
-        boolean isSuccess = konketDexService.sendKonketDex(user, konketmon);
-        if (!isSuccess) {
-            System.out.println("해당 콘켓몬을 도감에 넣지 못했습니다.");
-        }
-        return isSuccess;
-    }
 }
