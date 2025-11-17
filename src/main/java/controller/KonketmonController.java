@@ -98,7 +98,7 @@ public class KonketmonController {
         double currCatchRate;
         double currHP = konketmon.getHP();
 
-        double hpRatio = (double) currHP / MAXHP;
+        double hpRatio = currHP / MAXHP;
         //포획율 계산
         currCatchRate = BASECATCHRATE + (1 - hpRatio) * 0.7;
 
@@ -110,9 +110,17 @@ public class KonketmonController {
         int printCurrCatchRate = (int) Math.round(currCatchRate * 100);
         System.out.println("현재 포획 확률 ... " + printCurrCatchRate + "%");
 
+        int prev_size = capturedKonketmon.size();
+
         if (isCaptured) {
-            capturedKonketmon.add(konketmon);
-            sendKonketDex(konketmon);
+            if (konketmonService.getKonketmonList().size() == capturedKonketmon.size()) {
+                System.out.println("모든 콘켓몬을 이미 잡았습니다.");
+            } else capturedKonketmon.add(konketmon);
+
+            if (prev_size == capturedKonketmon.size()) {
+                // 몬스터를 넣기 전 사이즈와 이후 사이즈가 동일하다면 중복으로 값이 들어가지 않았음을 의미
+                System.out.println("이미 존재하는 콘켓몬입니다.");
+            } else sendKonketDex(konketmon);
         }
         return isCaptured;
     }
